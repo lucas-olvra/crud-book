@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env/
+.env
+venv/
+.env\n
+# Virtual environment folders
+venv/
+ENV/
+env/
+database.yaml/
+
+# VS Code
+.vscode/
+
+# Byte-compiled / optimized
+*.pyc

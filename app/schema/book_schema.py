@@ -11,4 +11,10 @@ class CreateBookRequest(BaseModel):
 
 class BookResponse(BaseModel):
     id: int
-    title: str    
+    title: str
+
+class ListBooksResponse(BaseModel):
+    books: list[BookResponse]
+    totalCount: int
+    limit: int
+    offset: int        

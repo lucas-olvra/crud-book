@@ -1,6 +1,6 @@
 import logging
 from fastapi import FastAPI
-from app.resource.book_resource import router as book_router
+from resource.book_resource import router
 
 logging.basicConfig(
     level=logging.INFO, 
@@ -14,7 +14,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-app.include_router(book_router)
+app.include_router(router)
 
 @app.get("/health", tags=["Health"])
 async def root():

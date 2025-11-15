@@ -1,5 +1,5 @@
-from app.domain.book import Book
-from app.schema.book_schema import CreateBookRequest, BookResponse
+from domain.book import Book
+from schema.book_schema import CreateBookRequest, BookResponse
 import datetime
 import logging
 

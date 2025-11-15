@@ -1,29 +1,28 @@
 from fastapi import APIRouter, HTTPException, Depends
-from app.config import connection_db
-from app.service.book_service import BookService
-from app.schema.book_schema import CreateBookRequest, BookResponse
+from config import connection_db
+from service.book_service import BookService
+from schema.book_schema import CreateBookRequest, BookResponse, ListBooksResponse
+from dependencies.get_book_service import get_book_service
 import logging
+
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/books", tags=["books"])
 
+
 @router.post("/", response_model=BookResponse)
-async def create_book(request: CreateBookRequest, connection_db = Depends(connection_db)):
-    logger.info("=" * 60)
-    logger.info("📥 [RESOURCE] Received request to create book")
+async def create_book(request: CreateBookRequest, book_service: BookService = Depends(get_book_service)):
+    logger.info("[RESOURCE] Received request to create book")
     logger.info(f"[RESOURCE] Book data: title={request.title}, author={request.author}")
     
     try:
-        book_service = BookService(connection_db)
         created_book = await book_service.create_book(request)
         
-        logger.info(f"✅ [RESOURCE] Book created successfully with ID: {created_book.id}")
-        logger.info("=" * 60)
+        logger.info(f"[RESOURCE] Book created successfully with ID: {created_book.id}")
         return created_book
     except Exception as e:
-        logger.error(f"❌ [RESOURCE] Error creating book: {str(e)}", exc_info=True)
-        logger.info("=" * 60)
+        logger.error(f"[RESOURCE] Error creating book: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
     
 
@@ -33,11 +32,28 @@ async def create_book(request: CreateBookRequest, connection_db = Depends(connec
     summary="Get Book by ID",
     status_code=200
 )
-async def get_book(book_id: int, connection_db = Depends(connection_db)) -> BookResponse:
+async def get_book(book_id: int, book_service: BookService = Depends(get_book_service)) -> BookResponse:
     try: 
-        book_service = BookService(connection_db)
         book = await book_service.get_book_by_id(book_id)
         return book
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
+@router.get(
+    path="/",
+    description="Get a list of books with pagination",
+    summary="List Books",
+    status_code=200
+)    
+async def get_books(
+    limit: int,
+    offset: int,
+    book_service: BookService = Depends(get_book_service)
+) -> ListBooksResponse:
+    try:
+        books_response = await book_service.get_books(limit, offset)
+        return books_response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
-from config import connection_db
 from service.book_service import BookService
-from schema.book_schema import CreateBookRequest, BookResponse, ListBooksResponse
+from schema.book_schema import CreateBookRequest, BookResponse, ListBooksResponse, UpdateBookRequest
 from dependencies.get_book_service import get_book_service
 import logging
 
@@ -47,8 +46,8 @@ async def get_book(book_id: int, book_service: BookService = Depends(get_book_se
     status_code=200
 )    
 async def get_books(
-    limit: int,
-    offset: int,
+    limit: int | None = 10,
+    offset: int | None = 0,
     book_service: BookService = Depends(get_book_service)
 ) -> ListBooksResponse:
     try:
@@ -56,4 +55,37 @@ async def get_books(
         return books_response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+@router.patch(
+    path="/{book_id}",
+    description="Update a book by its ID",
+    summary="Update Book by ID",
+    status_code=200
+)
+async def update_book(book_id: int, 
+                      request: UpdateBookRequest, 
+                      book_service: BookService = Depends(get_book_service)) -> BookResponse:
+    logger.info(f"[RESOURCE] Received request to update book with ID: {book_id}")
+    try:
+        updated_book = await book_service.update_book(book_id, request)
+        logger.info(f"[RESOURCE] Book with ID: {book_id} updated successfully")
+        return updated_book
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete(
+    path="/{book_id}",
+    description="Delete a book by its ID",
+    summary="Delete Book by ID",
+    status_code=204
+)
+async def delete_book(book_id: int, book_service: BookService = Depends(get_book_service)):
+    logger.info(f"[RESOURCE] Received request to delete book with ID: {book_id}")
+    try:
+        await book_service.delete_book(book_id)
+        logger.info(f"[RESOURCE] Book with ID: {book_id} deleted successfully")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))        
 

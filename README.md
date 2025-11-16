@@ -1,6 +1,6 @@
-🔄 Fluxo Completo da Aplicação
+Fluxo Completo da Aplicação
 
-📱 CLIENT (Postman/Frontend)
+CLIENT (Postman/Frontend)
     |
     | POST /books (JSON)
     ↓
@@ -45,7 +45,7 @@
 │   • ROW → DOMAIN (do banco)                                │
 │   • DOMAIN → RESPONSE                                       │
 └─────────────────────────────────────────────────────────────┘
-📊 Diagrama Simplificado
+Diagrama Simplificado
 REQUEST → RESOURCE → SERVICE → DATAPROVIDER → DATABASE
    ↓         ↓          ↓           ↓             ↓
  (JSON)   (valida)  (lógica)    (persiste)    (salva)
@@ -56,7 +56,7 @@ DATABASE → DATAPROVIDER → SERVICE → RESOURCE → RESPONSE
    ↓             ↓          ↓          ↓          ↓
 (retorna)    (converte)  (processa) (retorna)  (JSON)
 
-🎯 Resumo de Responsabilidades
+Resumo de Responsabilidades
 Camada        O que faz                          O que NÃO faz
 RESOURCE      Recebe HTTP, valida, retorna HTTP  Não conhece banco de dados
 SERVICE       Orquestra a lógica de negócio      Não conhece SQL
@@ -65,7 +65,7 @@ MAPPER        Converte entre formatos            Não tem lógica de negócio
 DOMAIN        Representa a entidade Book         Não tem comportamento
 SCHEMA        Define contratos de entrada/saída  Não persiste dados
 
-🚀 Como pensar ao criar um endpoint novo
+Como pensar ao criar um endpoint novo
 Quando você for criar um novo endpoint, pense de fora para dentro:
 
 1️⃣ Comece pelo RESOURCE (a porta de entrada)
@@ -85,7 +85,7 @@ pythonasync def get_book_by_id(conn, book_id: int) -> Book:
     # SELECT * FROM books WHERE id = %s
 4️⃣ Por fim, o MAPPER (as conversões)
 
-🎓 Dica Final
+Dica Final
 - Sempre pense no fluxo:
 
 - O que entra? (JSON → Schema)
@@ -93,4 +93,7 @@ pythonasync def get_book_by_id(conn, book_id: int) -> Book:
 - Onde salvar/buscar? (DataProvider)
 - O que retornar? (Schema)
 
-E o Mapper é o "tradutor" entre todas essas camadas! 🌉
+E o Mapper é o "tradutor" entre todas essas camadas!
+
+Veja o diagrama completo do sistema no Excalidraw:
+[Diagrama Excalidraw](https://excalidraw.com/#json=tonx4Kyex7NxfKLsaYVG9,wPQNrzptp9C_beSf4YENdg)
